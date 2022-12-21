@@ -1,0 +1,34 @@
+import {createRouter, createWebHashHistory} from "vue-router";
+// @ts-ignore
+import layout from "@/pages/layout/index.vue"
+// @ts-ignore
+import main from "@/pages/components/AppMain.vue"
+
+export const constantRoutes = [
+    {
+        path: '/',
+        component: layout
+    },
+    {
+        path: '/index',
+        component: layout
+    },
+    {
+        path: '/camera',
+        component: layout,
+        children: [
+            {
+                path: "allCamera",
+                component: import("/src/pages/views/camera/index.vue")
+            }
+        ]
+    }
+]
+
+const router = createRouter({
+    history: createWebHashHistory(),
+    routes: constantRoutes
+})
+export default router;
+
+
