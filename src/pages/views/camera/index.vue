@@ -14,7 +14,7 @@ const { paginationData, handleCurrentChange, handleSizeChange } = usePagination(
 const dialogVisible = ref<boolean>(false)
 const formRef = ref<FormInstance | null>(null)
 const device = reactive({
-  source: "本地",
+  url: "",
   deviceName: ""
 })
 const radio1 = ref('1')
@@ -64,7 +64,7 @@ const handleCreate = () => {
 }
 const resetForm = () => {
   currentUpdateId.value = undefined
-  device.source = ""
+  device.url = ""
   device.deviceName = ""
 }
 //#endregion
@@ -89,7 +89,7 @@ const currentUpdateId = ref<undefined | string>(undefined)
 const handleUpdate = (row: any) => {
   console.log(row)
   currentUpdateId.value = row.id
-  device.source = row.source
+  device.url = row.url
   device.deviceName = row.deviceName
   dialogVisible.value = true
 }
@@ -99,7 +99,7 @@ const handleUpdate = (row: any) => {
 const tableData = ref<any[]>()
 const searchFormRef = ref<FormInstance | null>(null)
 const searchData = reactive({
-  src: "",
+  url: "",
   phone: ""
 })
 const getTableData = () => {
@@ -171,10 +171,10 @@ onMounted(() => {
     <el-card v-loading="loading" shadow="never" class="search-wrapper">
       <el-form ref="searchFormRef" :inline="true" :model="searchData">
         <el-form-item prop="username" label="名称">
-          <el-input v-model="searchData.src" placeholder="请输入" />
+          <el-input v-model="searchData.url" placeholder="请输入" />
         </el-form-item>
-        <el-form-item prop="phone" label="Source">
-          <el-input v-model="searchData.phone" placeholder="请输入" />
+        <el-form-item prop="url" label="url">
+          <el-input v-model="searchData.url" placeholder="请输入" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
@@ -201,7 +201,7 @@ onMounted(() => {
         <el-table :data="tableData">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column prop="deviceName" label="名称" align="center" />
-          <el-table-column prop="source" label="Source" align="center" />
+          <el-table-column prop="url" label="url" align="center" />
           <el-table-column prop="isDeleted" label="状态" align="center">
             <template #default="scope">
               <el-tag v-if="scope.row.isDeleted" type="success" effect="plain" @click="test(scope.row)">启用</el-tag>
@@ -244,11 +244,11 @@ onMounted(() => {
             <el-radio label="2" size="large" @click="remoteCamera">远程摄像头</el-radio>
           </el-radio-group>
         </div>
-        <el-form-item prop="source" label="名称">
+        <el-form-item prop="deviceName" label="名称">
           <el-input v-model="device.deviceName" placeholder="请输入" />
         </el-form-item>
-        <el-form-item prop="password" label="Source">
-          <el-input v-model="device.source" :disabled="cameraStatus" placeholder="请输入" />
+        <el-form-item prop="password" label="url">
+          <el-input v-model="device.url" :disabled="cameraStatus" placeholder="请输入" />
         </el-form-item>
       </el-form>
       <template #footer>

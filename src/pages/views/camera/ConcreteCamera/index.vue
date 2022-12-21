@@ -12,6 +12,8 @@
   }
 
   .remote_wrap {
+    border: 2px solid cornflowerblue;
+    border-radius: 20px;
     flex: 1;
 
     video {
@@ -34,13 +36,12 @@
       <video ref="remoteV" id="remote_video" autoplay></video>  <!--这一个应该-->
     </div>
     <div class="video_tool_wrap">
-      <div>{{$route.query.name}}</div>
-      <h5>选择摄像头源头:</h5>
-      <ul>
+      <h5 class="text-center">{{$route.query.name}}</h5>
+      <ul v-if="localStatus">
         <li>
           <div>
             <ul style="padding: 0">
-              <li @click="openLocalCam" v-show="(allVideoDevices.length===0)">本地摄像头</li>
+              <el-button type="info" @click="openLocalCam" v-show="(allVideoDevices.length===0)">本地摄像头</el-button>
               <!--          先打开本地摄像头 然后浏览器请求授权 这个时候浏览器打开的是一个 默认的摄像头的 之后用户可以更改当前摄像头 因为只有用户授权之后 才可以获取当前拥有的摄像头名称-->
               <li v-for="(device) in allVideoDevices" v-bind:key="device" @click="chooseViedoInput(device)">
                 {{ device.deviceName }}
@@ -51,31 +52,31 @@
             </ul>
           </div>
         </li>
-
-        <li>
-
-        </li>
       </ul>
       <div style="margin-top: 100px"></div>
-      <h5>操作</h5>
-      <div>
-        <button @click="this.ipCamDeviceInput.isShowIpCamInput=true">添加远程摄像头</button>
-        <div class="" v-show="this.ipCamDeviceInput.isShowIpCamInput">
-          <input v-model="this.ipCamDeviceInput.deviceName " placeholder="输入远程摄像头名称 必填">
-          <input v-model="this.ipCamDeviceInput.url" placeholder="输入远程摄像头地址">
-          <input v-model="this.ipCamDeviceInput.username" placeholder="用户名">
-          <input v-model="this.ipCamDeviceInput.password" placeholder="密码">
-          <button @click="addIpDevice">确定</button>
+      <div v-if="remoteStatus">
+        <el-button type="primary">远程摄像头操作</el-button>
+        <div class="mt-2">
+          <el-button type="primary" @click="this.ipCamDeviceInput.isShowIpCamInput=true">添加远程摄像头</el-button>
+          <div class="" v-show="this.ipCamDeviceInput.isShowIpCamInput">
+            <input v-model="this.ipCamDeviceInput.deviceName " placeholder="输入远程摄像头名称 必填">
+            <input v-model="this.ipCamDeviceInput.url" placeholder="输入远程摄像头地址">
+            <input v-model="this.ipCamDeviceInput.username" placeholder="用户名">
+            <input v-model="this.ipCamDeviceInput.password" placeholder="密码">
+            <button @click="addIpDevice">确定</button>
+          </div>
         </div>
       </div>
-      <div style="margin-top: 20px">
+      <div style="margin-top: 20px" v-if="localStatus">
         <div><span>当前选择输入设备：</span>{{ choosedDevice.deviceName }}</div>
-        <button @click="reqYolovDetect">建立yoloe实时检测连接</button>
-        <button @click="stopYolovDetect">断开连接</button>
+      </div>
+      <div class="flex">
+        <el-button type="success" @click="reqYolovDetect">建立yoloe实时检测连接</el-button>
+        <el-button type="danger" @click="stopYolovDetect">断开连接</el-button>
       </div>
     </div>
     <div class="newtest">
-      <button @click="connectDevice">测试</button>
+      <el-button type="" @click="connectDevice">测试</el-button>
     </div>
   </div>
 
@@ -96,7 +97,8 @@ export default {
   components: {},
   data() {
     return {
-      deviceName1: '',
+      localStatus: false,
+      remoteStatus: false,
       mediaConstraints: {video: true, audio: false},  //默认摄像头打开约束
       choosedDevice: {
         deviceName: "",//前端显示当前选择设备名称
@@ -115,8 +117,7 @@ export default {
   },
   created() {
     console.log("接受name：" + this.$route.query.name)
-    this.deviceName1 = this.$route.query.name;
-    this.ipCamDeviceInput.deviceName = this.deviceName1;
+    this.ipCamDeviceInput.deviceName = this.$route.query.name;
     console.log("开始获取监控信息：")
     this.$axios.get("/user/getDeviceInfo/" + this.ipCamDeviceInput.deviceName)
         .then(res => {
@@ -128,14 +129,22 @@ export default {
         })
   },
   watch: {
-    deviceName1(oldName,newName) {
+    $route(to,from) {
       console.log("开始更新监控信息：")
-      this.deviceName1 = this.$route.query.name;
-      this.ipCamDeviceInput.deviceName = this.deviceName1;
+      this.ipCamDeviceInput.deviceName = this.$route.query.name;
       this.$axios.get("/user/getDeviceInfo/" + this.ipCamDeviceInput.deviceName)
           .then(res => {
             console.log("监控的详细信息：");
             console.log(res.data);
+            this.ipCamDeviceInput.url = res.data.url;
+            if (res.data.source === "") {
+              this.allVideoDevices = []
+              this.localStatus = true;
+              this.remoteStatus = false;
+            } else {
+              this.remoteStatus = true;
+              this.localStatus = false;
+            }
           })
     }
   },

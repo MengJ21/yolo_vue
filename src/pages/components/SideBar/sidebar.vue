@@ -23,7 +23,7 @@
       <el-icon><icon-menu /></el-icon>
       <template #title>消息中心</template>
     </el-menu-item>
-    <el-menu-item index="3">
+    <el-menu-item index="3" @click="history">
       <el-icon><document /></el-icon>
       <template #title>历史记录</template>
     </el-menu-item>
@@ -67,6 +67,9 @@ const getConcreteCamera = (name) => {
       name: name
     }
   })
+}
+const history = () => {
+  router.push("/history/history")
 }
 onMounted(() => {
   request.post("/user/getAllDevice")

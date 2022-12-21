@@ -5,6 +5,9 @@ import layout from "@/pages/layout/index.vue"
 import main from "@/pages/components/AppMain.vue"
 // @ts-ignore
 import login from "/src/pages/views/login/index.vue"
+
+// @ts-ignore
+import history from "/src/pages/views/history/index.vue"
 export const constantRoutes = [
     {
         path: '/login',
@@ -30,6 +33,16 @@ export const constantRoutes = [
                 path: "concreteCamera",
                 name: "cameraContent",
                 component: import("/src/pages/views/camera/ConcreteCamera/index.vue")
+            }
+        ]
+    },
+    {
+        path: '/history',
+        component: layout,
+        children: [
+            {
+                path: "history",
+                component: history
             }
         ]
     }
