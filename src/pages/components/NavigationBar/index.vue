@@ -17,8 +17,17 @@
     <template #extra>
       <div class="flex items-center">
         <el-button>编辑</el-button>
-        <el-button type="warning" class="ml-2">退出</el-button>
+        <el-button type="warning" class="ml-2" @click="handleLogout">退出</el-button>
       </div>
     </template>
   </el-page-header>
 </template>
+<script lang="ts" setup>
+import router from "../../../router/index";
+import {delToken} from "../../../utils/cache/cookies";
+
+const handleLogout = () => {
+  router.push("/login");
+  delToken();
+}
+</script>

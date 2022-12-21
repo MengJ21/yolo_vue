@@ -10,15 +10,14 @@
       @open="handleOpen"
       @close="handleClose"
   >
-    <el-sub-menu index="1" @click="getCameraInfo">
+    <el-sub-menu index="1">
         <template #title>
           <el-icon><location /></el-icon>
-          <span>摄像头</span>
+          <span  @click="getCameraInfo">摄像头</span>
         </template>
-        <el-menu-item-group>
-          <el-menu-item index="1-1">摄像头1</el-menu-item>
-          <el-menu-item index="1-2">摄像头2</el-menu-item>
-        </el-menu-item-group>
+      <el-menu-item-group>
+        <el-menu-item v-for="device in devices" index="{{device.deviceName}}" @click="getConcreteCamera(device.deviceName)">{{device.deviceName}}</el-menu-item>
+      </el-menu-item-group>
     </el-sub-menu>
     <el-menu-item index="2">
       <el-icon><icon-menu /></el-icon>
@@ -36,7 +35,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import {onMounted, ref} from 'vue'
 import {
   Document,
   Menu as IconMenu,
@@ -44,9 +43,10 @@ import {
   Setting,
 } from '@element-plus/icons-vue'
 import {useRouter} from "vue-router";
+import request from "/src/utils/axios.js"
 
 const router = useRouter();
-
+const devices = ref<any[]>()
 const isCollapse = ref(true)
 const handleOpen = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
@@ -58,6 +58,27 @@ const getCameraInfo = () => {
   // 路由跳转
   router.push({ path: "/camera/allCamera"})
 }
+
+const getConcreteCamera = (name) => {
+  console.log("传入name：" + name)
+  router.push({
+    path:'/camera/concreteCamera',
+    query:{
+      name: name
+    }
+  })
+}
+onMounted(() => {
+  request.post("/user/getAllDevice")
+      .then((res: any) => {
+        console.log("sidebar获取所有设备信息：")
+        console.log(res.data)
+        devices.value = res.data.data;
+        console.log(devices)
+      }).catch(() => {
+    devices.value = [];
+  })
+})
 </script>
 
 <style>

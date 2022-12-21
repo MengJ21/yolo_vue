@@ -3,11 +3,16 @@ import {createRouter, createWebHashHistory} from "vue-router";
 import layout from "@/pages/layout/index.vue"
 // @ts-ignore
 import main from "@/pages/components/AppMain.vue"
-
+// @ts-ignore
+import login from "/src/pages/views/login/index.vue"
 export const constantRoutes = [
     {
+        path: '/login',
+        component: login
+    },
+    {
         path: '/',
-        component: layout
+        component: login
     },
     {
         path: '/index',
@@ -20,6 +25,11 @@ export const constantRoutes = [
             {
                 path: "allCamera",
                 component: import("/src/pages/views/camera/index.vue")
+            },
+            {
+                path: "concreteCamera",
+                name: "cameraContent",
+                component: import("/src/pages/views/camera/ConcreteCamera/index.vue")
             }
         ]
     }
